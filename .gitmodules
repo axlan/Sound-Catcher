@@ -1,0 +1,3 @@
+[submodule "HTML5_Audio_Visualizer"]
+	path = HTML5_Audio_Visualizer
+	url = git@github.com:axlan/HTML5_Audio_Visualizer.git
