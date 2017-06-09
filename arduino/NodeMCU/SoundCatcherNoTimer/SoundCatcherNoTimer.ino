@@ -7,11 +7,8 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-#include "FastLED.h"
-
-#define NUM_STRIPS 1
-#define NUM_LEDS_PER_STRIP 100
-CRGB leds[NUM_STRIPS][NUM_LEDS_PER_STRIP];
+#include "Patterns.h"
+#include "LedController.h"
 
 const char* host = "esp8266-webupdate";
 const char* ssid = "Planet SR388";
@@ -20,12 +17,16 @@ const char* password = "HERBERTHOOVER";
 ESP8266WebServer server(80);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
+PatternBase* pattern;
+
 void setup(void){
+  
+  LedController::init();
+  pattern = new update_red_8_led_test(100);
   Serial.begin(115200);
   Serial.println();
   Serial.println("Booting Sketch...");
   
-  FastLED.addLeds<NEOPIXEL, 1>(leds[0], NUM_LEDS_PER_STRIP);
   WiFi.mode(WIFI_AP_STA);
   WiFi.begin(ssid, password);
   if(WiFi.waitForConnectResult() == WL_CONNECTED){
@@ -72,18 +73,11 @@ void setup(void){
     Serial.println("WiFi Failed");
   }
 }
- 
+
+
+
+
 void loop(void){
-  // This outer loop will go over each strip, one at a time
-  for(int x = 0; x < NUM_STRIPS; x++) {
-    // This inner loop will go over each led in the current strip, one at a time
-    for(int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
-      leds[x][i] = CRGB::Red;
-      FastLED.show();
-      leds[x][i] = CRGB::Black;
-      delay(100);
-      
-      server.handleClient();
-    }
-  }
+  pattern->update();
+  server.handleClient();
 } 

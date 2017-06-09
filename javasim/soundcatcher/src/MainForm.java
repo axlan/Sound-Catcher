@@ -2,13 +2,6 @@
  * Created by jdiamond on 6/6/2017.
  */
 
-import com.sun.deploy.util.ArrayUtil;
-import com.sun.media.sound.WaveFileReader;
-import javafx.scene.media.AudioClip;
-import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.Loader;
-import sun.audio.AudioPlayer;
-
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -21,10 +14,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
-import org.bytedeco.javacpp.fftw3;
-
-import static org.bytedeco.javacpp.fftw3.*;
 
 public class MainForm {
 
@@ -521,9 +510,9 @@ class MyPanel extends JPanel {
   */
 
         //Clock2 pattern = new Clock2(this);
-        String path = "C:\\Users\\jdiamond\\Downloads\\Black Moth Super Rainbow - 09 The Afternoon Turns Pink.wav";
-        //String path = "C:\\Users\\jdiamond\\Downloads\\Various Artists - 017 - Queen - Bohemian Rhapsody.wav";
-        //String path = "C:\\Users\\jdiamond\\Downloads\\Various Artists - 001 - Led Zeppelin - Stairway To Heaven.wav";
+        String path = "C:\\Users\\axlan\\Downloads\\Black Moth Super Rainbow - 09 The Afternoon Turns Pink.wav";
+        //String path = "C:\\Users\\axlan\\Downloads\\Various Artists - 017 - Queen - Bohemian Rhapsody.wav";
+        //String path = "C:\\Users\\axlan\\Downloads\\Various Artists - 001 - Led Zeppelin - Stairway To Heaven.wav";
         Sound7 pattern = new Sound7(this, path);
         pattern.connect();
 
