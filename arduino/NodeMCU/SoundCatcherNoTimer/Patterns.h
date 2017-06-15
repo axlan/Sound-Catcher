@@ -7,3 +7,4 @@ public:
 };
 
 #include "TestPatterns.h"
+#include "Clocks.h"

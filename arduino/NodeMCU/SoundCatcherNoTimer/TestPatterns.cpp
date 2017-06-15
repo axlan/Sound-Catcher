@@ -29,3 +29,9 @@ void update_red_8_led_test::update() {
   LedController::repaint();
   delay(delay_ms);
 }
+
+void update_blank::update() {
+
+	LedController::setall(CRGB::Black);
+  delay(100);
+}

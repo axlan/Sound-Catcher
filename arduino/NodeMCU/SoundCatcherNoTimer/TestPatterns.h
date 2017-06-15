@@ -21,3 +21,7 @@ public:
   void update();
 };
 
+class update_blank : public PatternBase{
+public:
+  void update();
+};

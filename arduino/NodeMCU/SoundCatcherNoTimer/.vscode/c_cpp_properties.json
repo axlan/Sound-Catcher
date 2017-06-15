@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:/Users/axlan/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "C:/Users/axlan/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266",
+                    "C:/Users/axlan/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/libraries/ESP8266WiFi/src",
+                    "C:/Users/axlan/AppData/Local/Arduino15/pckages/esp8266/hardware/esp8266/2.3.0/libraries/ESP8266WebServer",
+                    "C:/Users/axlan/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/libraries/ESP8266mDNS"
+                ]
+            }
+        }
+    ]
+}

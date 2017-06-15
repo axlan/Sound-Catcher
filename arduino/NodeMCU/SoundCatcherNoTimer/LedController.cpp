@@ -5,7 +5,9 @@ static CRGB leds[NUM_LEDS_PER_STRIP];
  
 void LedController::init()
 {
-	FastLED.addLeds<NEOPIXEL, 1>(leds, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<NEOPIXEL, 1>(leds, NUM_LEDS_PER_STRIP);
+  setall(CRGB::Black);
+  repaint();
 }
 
 void LedController::setled(const CRGB &c, int spoke, int led) {
@@ -62,13 +64,14 @@ void LedController::setspoke(const CRGB & c, int spoke, float percent) {
 		setled(c, spoke, i);
 	}
 }
+*/
 
 void LedController::setall(const CRGB & c) {
-	for (int i = 0; i < NUM_SPOKES; i++) {
-		setspoke(c, i);
+	for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+		leds[i] = c;
 	}
 }
-*/
+
 void LedController::repaint()
 {
 	FastLED.show();

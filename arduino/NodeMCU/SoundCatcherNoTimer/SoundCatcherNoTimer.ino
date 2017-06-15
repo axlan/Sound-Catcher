@@ -14,6 +14,8 @@ const char* host = "esp8266-webupdate";
 const char* ssid = "Planet SR388";
 const char* password = "HERBERTHOOVER";
 
+bool updating = false;
+
 ESP8266WebServer server(80);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
@@ -22,7 +24,7 @@ PatternBase* pattern;
 void setup(void){
   
   LedController::init();
-  pattern = new update_red_8_led_test(100);
+
   Serial.begin(115200);
   Serial.println();
   Serial.println("Booting Sketch...");
@@ -32,6 +34,7 @@ void setup(void){
   if(WiFi.waitForConnectResult() == WL_CONNECTED){
     MDNS.begin(host);
     server.on("/", HTTP_GET, [](){
+      updating = true;
       server.sendHeader("Connection", "close");
       server.sendHeader("Access-Control-Allow-Origin", "*");
       server.send(200, "text/html", serverIndex);
@@ -72,12 +75,19 @@ void setup(void){
   } else {
     Serial.println("WiFi Failed");
   }
+  //check for 10
+  for(int i = 0; i < 30; i++) {
+    server.handleClient();
+    delay(100);
+  }
+  //pattern = new update_red_8_led_test(100);
+  //pattern = new update_minimal_clock();
+  pattern = new update_blank();
 }
 
-
-
-
 void loop(void){
-  pattern->update();
+  if (!updating) {
+    pattern->update();
+  }
   server.handleClient();
 } 
