@@ -11,6 +11,7 @@ void LedController::init()
 }
 
 void LedController::setled(const CRGB &c, int spoke, int led) {
+	spoke = (18 - spoke) % 12;
 	if (spoke & 1) {
 		leds[spoke * NUM_LED_PER_SPOKE + led] = c;
 	} else {

@@ -10,11 +10,6 @@ private:
 	int cur_minute;
 	int cur_sec;
 	unsigned long start_time;
-	enum State {
-		INIT,
-		SENT
-	};
-	State state;
 	void check_ntp();
 public:
 	update_minimal_clock();

@@ -9,6 +9,7 @@
 
 #include "Patterns.h"
 #include "LedController.h"
+#include "LogBuffer.h"
 
 const char* host = "esp8266-webupdate";
 const char* ssid = "Planet SR388";
@@ -24,6 +25,7 @@ PatternBase* pattern;
 void setup(void){
   
   LedController::init();
+  LogBuffer::Clear();
 
   Serial.begin(115200);
   Serial.println();
@@ -38,6 +40,19 @@ void setup(void){
       server.sendHeader("Connection", "close");
       server.sendHeader("Access-Control-Allow-Origin", "*");
       server.send(200, "text/html", serverIndex);
+    });
+    server.on("/log", HTTP_GET, [](){
+      server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      server.sendHeader("Pragma", "no-cache");
+      server.sendHeader("Expires", "-1");
+      server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+      server.send(200, "text/html", ""); // Empty content inhibits Content-length header so we have to close the socket ourselves.
+      server.sendContent("<h1>Logs</h1>");
+      while (!LogBuffer::IsEmpty()) {
+        server.sendContent("<p>" + String(LogBuffer::Read()) + "</p>");
+      }
+      LogBuffer::Clear();
+      server.client().stop(); // Stop is needed because we sent no content length
     });
     server.on("/update", HTTP_POST, [](){
       server.sendHeader("Connection", "close");
@@ -80,9 +95,11 @@ void setup(void){
     server.handleClient();
     delay(100);
   }
+
+  //pattern = new update_red_1_led_test(200);
   //pattern = new update_red_8_led_test(100);
-  //pattern = new update_minimal_clock();
-  pattern = new update_blank();
+  pattern = new update_minimal_clock();
+  //pattern = new update_blank();
 }
 
 void loop(void){

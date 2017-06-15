@@ -1,5 +1,6 @@
 #include "TestPatterns.h"
 #include "LEDController.h"
+#include "LogBuffer.h"
 
 update_red_1_led_test::update_red_1_led_test(int delay_ms):
 	delay_ms(delay_ms),
@@ -32,6 +33,7 @@ void update_red_8_led_test::update() {
 
 void update_blank::update() {
 
+  LogBuffer::Write("Test");
 	LedController::setall(CRGB::Black);
   delay(100);
 }

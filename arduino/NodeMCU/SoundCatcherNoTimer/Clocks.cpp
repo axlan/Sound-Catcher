@@ -1,5 +1,6 @@
 #include "Clocks.h"
 #include "LedController.h"
+#include "LogBuffer.h"
 #include <WiFiUdp.h>
 #include <ESP8266WiFi.h>
 
@@ -21,7 +22,7 @@ static WiFiUDP udp;
 // send an NTP request to the time server at the given address
 static unsigned long sendNTPpacket(IPAddress& address)
 {	
-  Serial.println("sending NTP packet...");
+  //Serial.println("sending NTP packet...");
   // set all bytes in the buffer to 0
   memset(packetBuffer, 0, NTP_PACKET_SIZE);
   // Initialize values needed to form NTP request
@@ -46,73 +47,82 @@ static unsigned long sendNTPpacket(IPAddress& address)
 void update_minimal_clock::check_ntp()
 {
 	// wait ten seconds before asking for the time again
-	if (state == INIT && millis() > start_time + 1000) {
+	if (millis() > start_time + 1000) {
 	  sendNTPpacket(timeServerIP); // send an NTP packet to a time server
-	  state = SENT;
-	} else if(state == SENT) {
-		  
-		int cb = udp.parsePacket();
-		if (!cb) {
-			return;
-		}
-		state = INIT;
-		start_time = millis();
-		Serial.print("packet received, length=");
-		Serial.println(cb);
-		// We've received a packet, read the data from it
-		udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
-
-		//the timestamp starts at byte 40 of the received packet and is four bytes,
-		// or two words, long. First, esxtract the two words:
-
-		unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
-		unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
-		// combine the four bytes (two words) into a long integer
-		// this is NTP time (seconds since Jan 1 1900):
-		unsigned long secsSince1900 = highWord << 16 | lowWord;
-		Serial.print("Seconds since Jan 1 1900 = " );
-		Serial.println(secsSince1900);
-
-		// now convert NTP time into everyday time:
-		Serial.print("Unix time = ");
-		// Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
-		const unsigned long seventyYears = 2208988800UL;
-		// subtract seventy years:
-		unsigned long epoch = secsSince1900 - seventyYears;
-		// print Unix time:
-		Serial.println(epoch);
-
-		cur_hour = (epoch  % 86400L) / 3600;
-		cur_minute = (epoch  % 3600) / 60;
-		cur_sec = epoch % 60;
 	}
+		
+	int cb = udp.parsePacket();
+	if (!cb) {
+		return;
+	}
+	start_time = millis();
+	//Serial.print("packet received, length=");
+	//Serial.println(cb);
+	// We've received a packet, read the data from it
+	udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
+
+	//the timestamp starts at byte 40 of the received packet and is four bytes,
+	// or two words, long. First, esxtract the two words:
+
+	unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
+	unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
+	// combine the four bytes (two words) into a long integer
+	// this is NTP time (seconds since Jan 1 1900):
+	unsigned long secsSince1900 = highWord << 16 | lowWord;
+	//Serial.print("Seconds since Jan 1 1900 = " );
+	//Serial.println(secsSince1900);
+
+	// now convert NTP time into everyday time:
+	//Serial.print("Unix time = ");
+	// Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
+	const unsigned long seventyYears = 2208988800UL;
+	// subtract seventy years:
+	unsigned long epoch = secsSince1900 - seventyYears;
+	// print Unix time:
+	//Serial.println(epoch);
+
+	cur_hour = (epoch  % 86400L) / 3600;
+	cur_minute = (epoch  % 3600) / 60;
+	cur_sec = epoch % 60;
 }
 
 
-update_minimal_clock::update_minimal_clock() :state(INIT), cur_hour(1),cur_minute(10),cur_sec(15), start_time(0){
+update_minimal_clock::update_minimal_clock():cur_hour(1), cur_minute(10), cur_sec(15), start_time(0) {
    udp.begin(localPort);
 //   //get a random server from the pool
 //   WiFi.hostByName(ntpServerName, timeServerIP); 
 }
 
 int update_minimal_clock::hour2spoke(int hour) {
-	return (hour + 6) % 12;
+	return (hour + 5) % 12;
 }
 int update_minimal_clock::min2spoke(int min) {
-	return ((min + 30) % 60) / 5;
+	return (min % 60) / 5;
 }
 void update_minimal_clock::update()
 {
 	
 	check_ntp();
+
+	char msg[64];
+	sprintf(msg, "%02d:%02d:%02d", cur_hour, cur_minute, cur_sec);
+	LogBuffer::Write(msg);
 	
 	LedController::setall(CRGB::Black);
 	
-	LedController::setspoke(CRGB::Red, hour2spoke(cur_hour));
+    CRGB col;
+
+	//Red
+	hsv2rgb_rainbow(CHSV(0, 255, 64), col);
+	LedController::setspoke(col, hour2spoke(cur_hour));
+	//Green
+	hsv2rgb_rainbow(CHSV(96, 255, 10), col);
 	LedController::setspoke(CRGB::Blue, min2spoke(cur_minute));
+	//Blue
+	hsv2rgb_rainbow(CHSV(160, 255, 30), col);
 	LedController::setspoke(CRGB::Green, min2spoke(cur_sec));
 
 	LedController::repaint();
 	
-	delay(100);
+	delay(500);
 }
