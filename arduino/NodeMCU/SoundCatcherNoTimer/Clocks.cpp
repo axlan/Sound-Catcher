@@ -112,15 +112,25 @@ void update_minimal_clock::update()
 	
     CRGB col;
 
+
+	//Purple
+	hsv2rgb_rainbow(CHSV(200, 255, 64), col);
+	for (int i = 0; i < LedController::NUM_SPOKES; i++) {
+		LedController::setled(col, i, LedController::NUM_LED_PER_SPOKE - 1);
+	}
+	
+	//Blue
+	hsv2rgb_rainbow(CHSV(160, 255, 64), col);
+	LedController::setspoke(col, min2spoke(cur_sec));
+
+	//Green
+	hsv2rgb_rainbow(CHSV(96, 255, 64), col);
+	LedController::setspoke(col, min2spoke(cur_minute), 0.875);
+
 	//Red
 	hsv2rgb_rainbow(CHSV(0, 255, 64), col);
-	LedController::setspoke(col, hour2spoke(cur_hour));
-	//Green
-	hsv2rgb_rainbow(CHSV(96, 255, 10), col);
-	LedController::setspoke(CRGB::Blue, min2spoke(cur_minute));
-	//Blue
-	hsv2rgb_rainbow(CHSV(160, 255, 30), col);
-	LedController::setspoke(CRGB::Green, min2spoke(cur_sec));
+	LedController::setspoke(col, hour2spoke(cur_hour), .625);
+
 
 	LedController::repaint();
 	

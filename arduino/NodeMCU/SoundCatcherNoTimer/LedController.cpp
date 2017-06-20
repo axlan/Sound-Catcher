@@ -1,4 +1,5 @@
 #include "LedController.h"
+#include <math.h>
 
 #define NUM_LEDS_PER_STRIP 96
 static CRGB leds[NUM_LEDS_PER_STRIP];
@@ -25,25 +26,26 @@ void LedController::setspoke(const CRGB & c, int spoke) {
 	}
 }
 
+int LedController::percent_to_ring(float percent) {
+	return (int)max(0,
+			        min(NUM_SPOKES - 1,
+					round(percent * (float)(NUM_SPOKES)) - 1));
+}
 /*
 void LedController::rotate_spokes_cw() {
-	const CRGB & tmp[] = spokes[MyPanel.NUM_SPOKES-1];
+	const CRGB & tmp[] = leds[MyPanel.NUM_SPOKES-1];
 	for(int i = MyPanel.NUM_SPOKES-1; i > 0; i--) {
 		spokes[i] = spokes[i-1];
 	}
 	spokes[0] = tmp;
 }
+*/
 
-int LedController::percent_to_ring(float percent) {
-	return (int)Math.max(0,
-			Math.min(NUM_SPOKES - 1,
-					Math.round(percent * (float)(NUM_SPOKES)) - 1));
-}
 
 int LedController::percent_to_led(float percent) {
-	return (int)Math.max(0,
-						 Math.min(NUM_LED_PER_SPOKE - 1,
-								  Math.round(percent * (float)(NUM_LED_PER_SPOKE)) - 1));
+	return (int)max(0,
+					min(NUM_LED_PER_SPOKE - 1,
+					round(percent * (float)(NUM_LED_PER_SPOKE)) - 1));
 }
 
 void LedController::setring(const CRGB & c, int ring) {
@@ -65,7 +67,6 @@ void LedController::setspoke(const CRGB & c, int spoke, float percent) {
 		setled(c, spoke, i);
 	}
 }
-*/
 
 void LedController::setall(const CRGB & c) {
 	for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
