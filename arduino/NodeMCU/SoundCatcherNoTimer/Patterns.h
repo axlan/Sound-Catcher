@@ -8,3 +8,4 @@ public:
 
 #include "TestPatterns.h"
 #include "Clocks.h"
+#include "SoundVisualizer.h"
