@@ -99,8 +99,9 @@ void setup(void){
   //pattern = new update_red_1_led_test(200);
   //pattern = new update_red_8_led_test(100);
   //pattern = new update_minimal_clock();
-  pattern = new update_amplitude_basic();
-  //pattern = new update_log_samples();
+  //pattern = new update_amplitude_basic();
+  //pattern = new update_fft_test();
+  pattern = new update_log_samples();
   //pattern = new update_blank();
 }
 

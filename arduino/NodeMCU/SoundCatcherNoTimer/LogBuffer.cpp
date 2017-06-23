@@ -1,6 +1,7 @@
 
 #include "LogBuffer.h"
 #include <string.h>
+#include <stdio.h>
 
 static const int BUFF_SIZE = 1024;
 static char BUFFER[BUFF_SIZE];
@@ -11,6 +12,13 @@ static int tail;
 void LogBuffer::Clear() {
     head = 0;
     tail = 0;
+}
+
+void LogBuffer::Write(int val)
+{
+   char msg[16];
+   sprintf(msg, "%d", val);
+   Write(msg);
 }
 
 void LogBuffer::Write(const char * msg)

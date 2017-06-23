@@ -6,6 +6,9 @@
         "utility": "cpp",
         "xmemory": "cpp",
         "xfunctional": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "vector": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     }
 }
