@@ -3,3 +3,4 @@ docs/
 *.wav
 **/out/
 !.idea
+WifiConfig.h

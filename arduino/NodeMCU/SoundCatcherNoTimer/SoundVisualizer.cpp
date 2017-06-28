@@ -120,7 +120,7 @@ void update_amplitude_star::update() {
   for(uint16_t i = 0; i < samples; i++)
   {
     //power += log(float(abs(analogRead(A0) - 512)));
-    power += max(abs(analogRead(A0) - 512) - 15, 0);
+    power += std::max(abs(analogRead(A0) - 512) - 15, 0);
     delayMicroseconds(delayTime);
   }
 

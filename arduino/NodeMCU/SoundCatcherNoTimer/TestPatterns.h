@@ -2,23 +2,15 @@
 
 #include "Patterns.h"
 
-class update_red_1_led_test : public PatternBase{
+class update_red_led_test : public PatternBase{
 private:
 	int spoke_idx;
   int led_idx;
-	int delay_ms;
+  Value s_single_not_spoke;
+	Value s_delay_ms;
 public:
-	update_red_1_led_test(int delay_ms);
+	update_red_led_test();
 	void update();
-};
-
-class update_red_8_led_test : public PatternBase{
-private:
-  int spoke_idx;
-  int delay_ms;
-public:
-  update_red_8_led_test(int delay_ms);
-  void update();
 };
 
 class update_blank : public PatternBase{
