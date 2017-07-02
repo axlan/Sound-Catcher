@@ -267,10 +267,15 @@ void update_fft_spoke::update()
     spoke_hat[i] = std::max(spoke_hat[i], float(level));
 
     CRGB col;
-    hsv2rgb_rainbow(CHSV(160, 255, 64), col);
-    LedController::setspoke(col, i, level);
+    for (int k = 0; k <= level; k++)
+    {
+      uint8_t col_val = 96 - k * 96 / (LedController::NUM_LED_PER_SPOKE - 1);
+      hsv2rgb_rainbow(CHSV(col_val, 255, 64), col);
+      LedController::setled(col, i, k);
+    }
     hsv2rgb_rainbow(CHSV(0, 255, 64), col);
     LedController::setled(col, i, round(spoke_hat[i]));
+
   }
   
   LedController::repaint();
