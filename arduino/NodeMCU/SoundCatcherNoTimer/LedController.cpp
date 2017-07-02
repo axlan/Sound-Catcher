@@ -61,8 +61,18 @@ void LedController::setring(const CRGB & c, int band, float percent) {
 	}
 }
 
+void LedController::setspoke(const CRGB & c, int spoke, double percent) {
+	setspoke(c, spoke, float(percent));
+}
+
 void LedController::setspoke(const CRGB & c, int spoke, float percent) {
 	int leds = percent_to_led(percent);
+	for(int i = 0; i <= leds; i++) {
+		setled(c, spoke, i);
+	}
+}
+
+void LedController::setspoke(const CRGB & c, int spoke, int leds) {
 	for(int i = 0; i <= leds; i++) {
 		setled(c, spoke, i);
 	}

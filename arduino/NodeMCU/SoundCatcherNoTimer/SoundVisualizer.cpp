@@ -3,6 +3,7 @@
 #include "LogBuffer.h"
 #include "kiss_fftr.h"
 #include "fix_fft.h"
+#include <math.h>
 
 update_fft_test::update_fft_test():done(false){}
 
@@ -11,11 +12,11 @@ void update_fft_test::update() {
     const double samplingFrequency = 8000;
     const unsigned int delayTime = 1000000/samplingFrequency;
     const int samples = 32;
-    int8_t vReal[samples];
-    int8_t vImag[samples];
     const int8_t test[] = { 127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90 };
     
     {
+      int8_t vReal[samples];
+      int8_t vImag[samples];
       LogBuffer::Write("<b>fix_fft</b>");
       for (size_t i = 0; i < samples; i++)
       {
@@ -36,7 +37,6 @@ void update_fft_test::update() {
       LogBuffer::Write("<b>kiss_fftr</b>");
 
       kiss_fft_scalar vReal[samples];
-      const int8_t test[] = { 127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90,127,90,0,-90,-127,-90,0,90 };
       for (size_t i = 0; i < samples; i++)
       {
           vReal[i] = test[i];
@@ -153,7 +153,7 @@ update_amplitude_basic::update_amplitude_basic()
   const float exp_step = top_exp / float(num_levels);
   
   for(int i = 0; i < num_levels; i++) {
-  levels[i] = scale * pow(2.0, exp_step * float(i));
+    levels[i] = scale * pow(2.0, exp_step * float(i));
   }
 }
 
@@ -210,4 +210,70 @@ void update_amplitude_basic::update() {
   LedController::repaint();
 
   delay(100);
+}
+
+uint16_t* fft32_base::run_fft()
+{
+  const double samplingFrequency = 8000;
+  const unsigned int delayTime = 1000000/samplingFrequency;
+  for(uint16_t i =0;i<samples;i++)
+  {
+    vReal[i] = analogRead(A0) - 512 + 15;
+    vImag[i] = 0;
+    delayMicroseconds(delayTime);
+  }
+  fix_fft(vReal, vImag, 5, 0);
+  for(uint16_t i =0;i<samples/2;i++)
+  {
+    mag_out[i] = vReal[i] * vReal[i] + vImag[i] * vImag[i];
+  }
+  return mag_out;
+}
+
+update_fft_spoke::update_fft_spoke(): s_exp_scaling(float(8)), s_hat_rate(float(.2)) {
+  memset(spoke_hat, 0, sizeof(spoke_hat));
+  add_val("exp scaling", &s_exp_scaling);
+  add_val("hat_rate", &s_hat_rate);
+}
+
+void update_fft_spoke::generate_levels() {
+  const float scale = 1;
+  const float exp_step = s_exp_scaling.get_float() / float(LedController::NUM_LED_PER_SPOKE);
+  
+  for(int i = 0; i < LedController::NUM_LED_PER_SPOKE; i++) {
+    levels[i] = scale * pow(2.0, exp_step * float(i));
+  }
+}
+
+int update_fft_spoke::find_level(uint16_t val) {
+  for(int i = 0; i < LedController::NUM_LED_PER_SPOKE; i++) {
+    if (val < levels[i]) {
+      return i;
+    }
+  }
+  return LedController::NUM_LED_PER_SPOKE - 1;
+}
+
+void update_fft_spoke::update()
+{
+  LedController::setall(CRGB::Black);
+  generate_levels();
+  uint16_t* mag = run_fft();
+
+  for(int i = 0; i < LedController::NUM_SPOKES; i++) {
+
+    spoke_hat[i] -= s_hat_rate.get_float();
+    int level = find_level(mag[i]);
+    spoke_hat[i] = std::max(spoke_hat[i], float(level));
+
+    CRGB col;
+    hsv2rgb_rainbow(CHSV(160, 255, 64), col);
+    LedController::setspoke(col, i, level);
+    hsv2rgb_rainbow(CHSV(0, 255, 64), col);
+    LedController::setled(col, i, round(spoke_hat[i]));
+  }
+  
+  LedController::repaint();
+  
+  delay(50);
 }

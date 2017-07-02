@@ -27,6 +27,10 @@ public:
 
     static void setspoke(const CRGB& c, int spoke, float percent);
 
+    static void setspoke(const CRGB& c, int spoke, double percent);
+
+    static void setspoke(const CRGB & c, int spoke, int leds);
+
     static void setall(const CRGB& c);
 	
 	static void repaint();

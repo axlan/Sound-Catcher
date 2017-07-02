@@ -35,3 +35,28 @@ private:
   int levels[num_levels];
 };
 
+class fft32_base : public PatternBase{
+protected:
+  uint16_t* run_fft();
+
+private:
+  static const int samples = 32;
+  int8_t vReal[samples];
+  int8_t vImag[samples];
+  uint16_t mag_out[samples/2];
+};
+
+class update_fft_spoke : public fft32_base{
+public:
+  update_fft_spoke();
+  void update();
+
+private:
+  float spoke_hat[LedController::NUM_SPOKES];
+  uint16_t levels[LedController::NUM_SPOKES];
+  int find_level(uint16_t val);
+  void generate_levels();
+  Value s_exp_scaling;
+	Value s_hat_rate;
+};
+
