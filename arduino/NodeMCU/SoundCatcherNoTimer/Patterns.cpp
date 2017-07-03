@@ -16,7 +16,7 @@
   }
 
 
-static const char* patterns[]={"red_led_test",
+static const char* patterns[]={"led_test",
                                "blank",
                                "minimal_clock",
                                "amplitude_basic",
@@ -35,7 +35,7 @@ int PatternBase::num_patterns()
 
 PatternBase * PatternBase::get_pattern(int idx) {
     switch(idx) {
-        case 0: return new update_red_led_test();
+        case 0: return new update_led_test();
         case 1: return new update_blank();
         case 2: return new update_minimal_clock();
         case 3: return new update_amplitude_basic();
