@@ -83,3 +83,13 @@ private:
   float spoke_hat[LedController::NUM_SPOKES];
 	Value s_hat_rate;
 };
+
+class update_fft_rotate : public fft32_base{
+public:
+  update_fft_rotate();
+  void update();
+  
+  Value s_high_scale;
+  Value s_mid_scale;
+  Value s_low_scale;
+};

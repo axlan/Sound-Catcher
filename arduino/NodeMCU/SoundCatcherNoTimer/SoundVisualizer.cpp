@@ -311,7 +311,7 @@ void update_fft_spoke::update()
       get_level_color(k, col);
       LedController::setled(col, i, k);
     }
-    hsv2rgb_rainbow(CHSV(0, 255, 64), col);
+    hsv2rgb_rainbow(CHSV(0, 255, s_brightness.get_int()), col);
     LedController::setled(col, i, round(spoke_hat[i]));
 
   }
@@ -319,4 +319,63 @@ void update_fft_spoke::update()
   LedController::repaint();
   
   delay(50);
+}
+
+update_fft_rotate::update_fft_rotate(): s_high_scale(float(2.0)),
+                                      s_mid_scale(float(1.0)),
+                                      s_low_scale(float(0.1)) {
+  s_exp_scaling.set_float(15);
+  s_sample_scaling.set_int(2);
+  add_val("how easily should high freq effect color", &s_high_scale);
+  add_val("how easily should mid freq effect color", &s_mid_scale);
+  add_val("how easily should low freq effect color", &s_low_scale);
+}
+
+void update_fft_rotate::update() {
+  uint16_t* mag = run_fft();
+
+  uint16_t low_mag = 0;
+  for(int i = 0; i < LedController::NUM_SPOKES / 3; i++) {
+    low_mag += mag[i];
+  }
+  uint16_t mid_mag = 0;
+  for(int i = LedController::NUM_SPOKES / 3; i < 2 * LedController::NUM_SPOKES / 3; i++) {
+    mid_mag += mag[i];
+  }
+  uint16_t high_mag = 0;
+  for(int i = 2 * LedController::NUM_SPOKES / 3; i < LedController::NUM_SPOKES; i++) {
+    high_mag += mag[i];
+  }
+  uint16_t total_mag = low_mag + mid_mag + high_mag;
+
+  low_mag *= s_low_scale.get_float();
+  mid_mag *= s_mid_scale.get_float();
+  high_mag *= s_high_scale.get_float();
+
+  int col_idx;
+  if (high_mag > mid_mag && mid_mag > low_mag) {
+    col_idx = 0;
+  } else if (high_mag > low_mag && low_mag > mid_mag) {
+    col_idx = 1;
+  } else if (mid_mag > high_mag && high_mag > low_mag) {
+    col_idx = 2;
+  } else if (mid_mag > low_mag && low_mag > high_mag) {
+    col_idx = 3;
+  } else if (low_mag > high_mag && high_mag > mid_mag) {
+    col_idx = 4;
+  } else {
+    col_idx = 5;
+  }
+  CRGB col;
+  hsv2rgb_rainbow(CHSV(255 / 5 * col_idx , 255, s_brightness.get_int()), col);
+  int level = find_level(total_mag);
+
+  LedController::rotate_spokes_cw();
+
+  LedController::setspoke(CRGB::Black, 0);
+  LedController::setspoke(col, 0, level);
+
+  LedController::repaint();
+  
+  delay(200);
 }

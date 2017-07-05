@@ -31,16 +31,29 @@ int LedController::percent_to_ring(float percent) {
 			        min(NUM_SPOKES - 1,
 					round(percent * (float)(NUM_SPOKES)) - 1));
 }
-/*
-void LedController::rotate_spokes_cw() {
-	const CRGB & tmp[] = leds[MyPanel.NUM_SPOKES-1];
-	for(int i = MyPanel.NUM_SPOKES-1; i > 0; i--) {
-		spokes[i] = spokes[i-1];
-	}
-	spokes[0] = tmp;
-}
-*/
 
+static CRGB* get_spoke_ptr(int spoke) {
+	return leds + LedController::NUM_LED_PER_SPOKE * spoke;
+}
+
+static constexpr size_t get_spoke_size() {
+	return sizeof(CRGB) * LedController::NUM_LED_PER_SPOKE;
+}
+
+static void mem_rev_cpy(CRGB* dst, CRGB* src, size_t size) {
+	for (int i = 0; i < size; i++) {
+		dst[size - 1 - i] = src[i];
+	}
+}
+
+void LedController::rotate_spokes_cw() {
+	CRGB tmp[NUM_LED_PER_SPOKE];
+	memcpy(tmp, get_spoke_ptr(NUM_SPOKES - 1), get_spoke_size());
+	for(int i = NUM_SPOKES-1; i > 0; i--) {
+		mem_rev_cpy(get_spoke_ptr(i), get_spoke_ptr(i - 1), LedController::NUM_LED_PER_SPOKE);
+	}
+	mem_rev_cpy(get_spoke_ptr(0), tmp, LedController::NUM_LED_PER_SPOKE);
+}
 
 int LedController::percent_to_led(float percent) {
 	return (int)max(0,
