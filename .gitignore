@@ -4,3 +4,4 @@ docs/
 **/out/
 !.idea
 WifiConfig.h
+.vscode/

@@ -29,7 +29,7 @@ void LedController::setspoke(const CRGB & c, int spoke) {
 int LedController::percent_to_ring(float percent) {
 	return (int)max(0,
 			        min(NUM_SPOKES - 1,
-					round(percent * (float)(NUM_SPOKES)) - 1));
+					(int)round(percent * (float)(NUM_SPOKES)) - 1));
 }
 
 static CRGB* get_spoke_ptr(int spoke) {
@@ -58,7 +58,7 @@ void LedController::rotate_spokes_cw() {
 int LedController::percent_to_led(float percent) {
 	return (int)max(0,
 					min(NUM_LED_PER_SPOKE - 1,
-					round(percent * (float)(NUM_LED_PER_SPOKE)) - 1));
+					(int)round(percent * (float)(NUM_LED_PER_SPOKE)) - 1));
 }
 
 void LedController::setring(const CRGB & c, int ring) {

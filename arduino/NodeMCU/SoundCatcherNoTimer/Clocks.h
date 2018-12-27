@@ -10,6 +10,7 @@ private:
 	int cur_minute;
 	int cur_sec;
 	unsigned long start_time;
+	Value s_utc_offset;
 	void check_ntp();
 public:
 	update_minimal_clock();

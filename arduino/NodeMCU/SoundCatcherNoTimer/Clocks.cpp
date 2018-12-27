@@ -8,7 +8,7 @@ unsigned int localPort = 2390;      // local port to listen for UDP packets
 
 /* Don't hardwire the IP address or we won't get the benefits of the pool.
  *  Lookup the IP address for the host name instead */
-IPAddress timeServerIP(129, 6, 15, 28); // time.nist.gov NTP server
+IPAddress timeServerIP(128, 138, 141, 172); // time.nist.gov NTP server
 // IPAddress timeServerIP; // time.nist.gov NTP server address
 // const char* ntpServerName = "time.nist.gov";
 
@@ -87,14 +87,15 @@ void update_minimal_clock::check_ntp()
 }
 
 
-update_minimal_clock::update_minimal_clock():cur_hour(1), cur_minute(10), cur_sec(15), start_time(0) {
+update_minimal_clock::update_minimal_clock():cur_hour(1), cur_minute(10), cur_sec(15), start_time(0), s_utc_offset(-8) {
+   add_val("UTC offset", &s_utc_offset);
    udp.begin(localPort);
 //   //get a random server from the pool
 //   WiFi.hostByName(ntpServerName, timeServerIP); 
 }
 
 int update_minimal_clock::hour2spoke(int hour) {
-	return (hour + 5) % 12;
+	return (hour + s_utc_offset.get_int()) % 12;
 }
 int update_minimal_clock::min2spoke(int min) {
 	return (min % 60) / 5;
