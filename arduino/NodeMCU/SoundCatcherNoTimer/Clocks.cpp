@@ -9,7 +9,7 @@ static WiFiUDP udp;
 
 void update_minimal_clock::check_ntp()
 {
-	// wait ten seconds before asking for the time again
+	// wait 1 seconds before asking for the time again
 	if (millis() > start_time + 1000) {
 	  ntp_client->update();
 	}

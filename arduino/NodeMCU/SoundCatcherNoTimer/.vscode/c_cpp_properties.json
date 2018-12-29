@@ -14,7 +14,9 @@
                     "C:/Users/axlan/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/libraries/ESP8266mDNS",
                     "C:/Users/axlan/Documents/Arduino/libraries/arduinoFFT-master/src"
                 ]
-            }
+            },
+            "intelliSenseMode": "msvc-x64"
         }
-    ]
+    ],
+    "version": 4
 }
